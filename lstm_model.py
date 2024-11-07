@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 import cv2
 import matplotlib.pyplot as plt
 from datetime import datetime
+from utils import extract_keyframes
 
 class LSTMModel:
     def __init__(self, dataset_dir, classes_list, image_height, image_width, sequence_length):
@@ -35,7 +36,7 @@ class LSTMModel:
         video_reader.release()
         return frames_list
 
-    def create_dataset(self):
+    def create_dataset(self, extract_keyframe=False):
         features = []
         labels = []
         video_files_paths = []
@@ -44,7 +45,15 @@ class LSTMModel:
             files_list = os.listdir(os.path.join(self.dataset_dir, class_name))
             for file_name in files_list:
                 video_file_path = os.path.join(self.dataset_dir, class_name, file_name)
-                frames = self.frames_extraction(video_file_path)
+                if extract_keyframe:
+                    frames = []
+                    keyframes = extract_keyframes(video_file_path, save=False, method='TOP_ORDER', num_top_frames=self.sequence_length)
+                    for frame in keyframes:
+                        resized_frame = cv2.resize(frame, (self.image_height, self.image_width))
+                        normalized_frame = resized_frame / 255
+                        frames.append(normalized_frame)
+                else:
+                    frames = self.frames_extraction(video_file_path)
                 if len(frames) == self.sequence_length:
                     features.append(frames)
                     labels.append(class_index)

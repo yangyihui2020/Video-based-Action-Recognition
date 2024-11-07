@@ -1,5 +1,5 @@
 python lstm_model_train.py \
---dataset_dir "/data/yangyihui/usr_dir/dataset/myvediodataset" \
+--dataset_dir "./myvediodataset" \
 --classes_list openfile1 openmail1 \
 --image_height 64 \
 --image_width 64 \
@@ -7,3 +7,4 @@ python lstm_model_train.py \
 --seed 27 \
 --epochs 100  \
 --batch_size 4 \
+--extract_keyframe
