@@ -25,7 +25,7 @@ def main(args):
 
     # 创建数据集
     print('Begin creating dataset')
-    features, labels, video_files_paths = lstm_model.create_dataset()
+    features, labels, video_files_paths = lstm_model.create_dataset(args.extract_keyframe)
     print('Dataset created successfully')
 
     # 将标签转换为 one-hot 编码
@@ -80,6 +80,7 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=27, help='Random seed for reproducibility.')
     parser.add_argument('--epochs', type=int, default=100, help='Number of epochs to train the model.')
     parser.add_argument('--batch_size', type=int, default=4, help='Batch size for training.')
+    parser.add_argument('--extract_keyframe', action='store_true', help='Whether to extract keyframes.')
 
     args = parser.parse_args()
     main(args)
