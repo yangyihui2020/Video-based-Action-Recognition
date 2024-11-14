@@ -9,6 +9,8 @@ Video-based-Action-Recognition/
 │
 ├── README.md
 │
+├── Video-based-Action-Recognition-Pytorch/ 这里存放了本项目代码的 pytorch 版本，可以使用 GPU 进行加速
+│
 ├── myvediodataset/  该文件夹用来放模型训练所需的数据，其中的子文件夹名称就是标签
 │   ├── openfile1/
 │   └── openmail1/
@@ -113,6 +115,7 @@ bash lstm_model_inference.sh
 ```
 bash extract_keyframes.sh
 ```
+
 注意，`extract_keyframes.sh`中会设置若干参数，它们的含义如下：
 
 ```

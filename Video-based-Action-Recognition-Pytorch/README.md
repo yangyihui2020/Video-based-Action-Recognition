@@ -1,11 +1,11 @@
-# Video-based-Action-Recognition
+# Video-based-Action-Recognition-Pytorch
 
 ## 项目结构
 
-下面简要介绍了一些本项目的项目结构
+这里存放了本项目代码的 pytorch 版本，可以使用 GPU 进行加速
 
 ```
-Video-based-Action-Recognition/
+Video-based-Action-Recognition-Pytorch/
 │
 ├── README.md
 │
@@ -102,7 +102,7 @@ bash lstm_model_inference.sh
 
 --model_path ：
 
-指定预训练 LSTM 模型文件的路径。这个 .h5 文件包含了模型的权重和结构，用于对视频数据进行预测。
+指定预训练 LSTM 模型文件的路径。这个 pth 文件包含了模型的权重和结构，用于对视频数据进行预测。
 --input_video_file_path ：
 
 指定要进行预测的视频文件的路径。这个视频将被输入到模型中，以识别其中的动作或事件。
