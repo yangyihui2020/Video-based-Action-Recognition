@@ -29,6 +29,10 @@ Video-based-Action-Recognition-Pytorch/
 │
 ├── lstm_model_train.sh               模型训练脚本
 │
+├──  extract_keyframes.py             关键帧提取代码
+│
+├──  extract_keyframes.sh             关键帧提取脚本
+│
 └──  lstm_model.py                    基于桌面端操作视频的动作识别模型类
 
 ```
@@ -48,6 +52,39 @@ Video-based-Action-Recognition-Pytorch/
 注意这里的动作类别，在后面模型训练时还需要用到，会作为一个参数传进模型训练代码中去，比如这里的 myvdiodataset 下有两个子文件夹：openfile1 openmail1 ,在后续运行` lstm_model_train.py`时就需要传入参数 `--classes_list openfile1 openmail1 `
 
 ## 启动这个项目
+### 关键帧提取
+
+在命令行运行如下命令
+
+```
+bash extract_keyframes.sh
+```
+注意，`extract_keyframes.sh`中会设置若干参数，它们的含义如下：
+
+```
+--video_path: 需要处理的视频路径。
+
+--output_dir：输出路径，输出的视频会保存在该路径下，默认为'./Output/'
+
+--output_video_name：输出视频的文件名，默认为'output.mp4'。
+
+--frame_rate：输出视频的帧率。若不指定该参数，则默认为输入视频的帧率
+
+--method：进行关键帧提取的方法，可选的方法包括：
+        "TOP_ORDER"：根据帧差最大的前 `num_top_frames` 帧来选择关键帧。
+        "Threshold"：选择帧差相对变化超过 `threshold` 的帧。
+        "LOCAL_MAXIMA"（默认）：从平滑处理后的帧差数组中选择局部最大值帧。
+
+--num_top_frames：使用 "TOP_ORDER" 方法时提取的关键帧数量， 默认为50。
+
+--threshold：在 "Threshold" 方法中使用，用于定义连续帧之间的最小相对变化，以便将某帧视为关键帧。该参数为0到1之间的浮点数，默认为0.6，该取值越大时，提取到的关键帧越少。
+
+--len_window：在 "LOCAL_MAXIMA" 方法中用于平滑帧差的窗口大小， 默认为50。
+
+--split：如果需要对输出视频进行分割，可以添加此参数。输出视频会被分割为时长相等的片段，分割后的视频保存在'output_dir'目录下。
+
+--clip_duration：进行视频分割时，每段视频的时长（以秒为单位），默认为60秒。若没有添加--split参数，则无需指定此参数。
+```
 
 ### 模型训练
 
