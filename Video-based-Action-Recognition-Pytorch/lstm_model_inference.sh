@@ -1,17 +1,17 @@
 python lstm_model_inference.py \
---model_path '/data/yangyihui/usr_dir/bank_project/Video-based-Action-Recognition-Pytorch/LSTM_model.pth' \
---input_video_file_path "/data/yangyihui/usr_dir/bank_project/Video-based-Action-Recognition-Pytorch/test_videos/20241025_105625.mp4" \
+--model_path './LSTM_model.pth' \
+--input_video_file_path "./test_videos/动态背景+窗口.mp4" \
 --classes_list openfile1 openmail1 openwebsite \
 --output_video_name 'output.mp4'
-#!/bin/bash
+
 
 # # 定义模型路径和Python脚本路径
-# MODEL_PATH='/data/yangyihui/usr_dir/bank_project/Video-based-Action-Recognition-Pytorch/LSTM_model.pth'
+# MODEL_PATH='./LSTM_model.pth'
 # PYTHON_SCRIPT='lstm_model_inference.py'
 # CLASSES_LIST='openfile1 openmail1 openwebsite'
 
 # # 定义输入视频文件夹和输出视频文件夹
-# INPUT_VIDEO_DIR="/data/yangyihui/usr_dir/bank_project/Video-based-Action-Recognition-Pytorch/test_videos/"
+# INPUT_VIDEO_DIR="./test_videos/"
 
 
 # # 遍历输入文件夹中的所有.mp4文件
@@ -27,8 +27,8 @@ python lstm_model_inference.py \
 #     --model_path $MODEL_PATH \
 #     --input_video_file_path "$video_file" \
 #     --classes_list $CLASSES_LIST \
-#     --output_video_name "$output_video_name"
-
+#     --output_video_name "$output_video_name" \
+#     --sequence_length 20 \
 # done
 
 # echo "All videos have been processed."

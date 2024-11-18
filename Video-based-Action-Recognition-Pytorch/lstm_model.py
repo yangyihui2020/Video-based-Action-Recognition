@@ -138,7 +138,7 @@ class LSTMModel:
             else:
                 early_stopping_counter += 1
                 if early_stopping_counter >= early_stopping_patience:
-                    print("Early stopping at epoch"+epoch)
+                    print("Early stopping at epoch"+str(epoch))
                     break
 
         # 训练后的时间

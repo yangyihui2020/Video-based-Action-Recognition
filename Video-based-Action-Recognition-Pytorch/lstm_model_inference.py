@@ -9,6 +9,7 @@ from lstm_model import LSTMModel
 import torch.nn.functional as F
 import time 
 from tqdm import tqdm
+from moviepy.editor import VideoFileClip
 
 def predict_on_video0(video_file_path, output_file_path, SEQUENCE_LENGTH, model, device,CLASSES_LIST,IMAGE_HEIGHT=64, IMAGE_WIDTH = 64, confidence_threshold=0.99):
     video_reader = cv2.VideoCapture(video_file_path)
@@ -130,7 +131,7 @@ def predict_on_video(video_file_path, output_file_path, SEQUENCE_LENGTH, model, 
             # print(probability_array)
 
             probability=probability_array[0]
-            print(probability)
+            # print(probability)
             predicted_label = np.argmax(probability)
             predicted_confidence = probability[predicted_label]
             frame=frame_list[i]
@@ -205,7 +206,93 @@ def predict_on_video(video_file_path, output_file_path, SEQUENCE_LENGTH, model, 
 
     # print(f"Total Processing Time: {total_time:.4f} seconds")
 
+
+def predict_on_video_test(video_file_path, output_dir, output_video_name, SEQUENCE_LENGTH, model, device, CLASSES_LIST, IMAGE_HEIGHT=64, IMAGE_WIDTH=64, confidence_threshold=0.99):
+    video_reader = cv2.VideoCapture(video_file_path)
+    output_file_path = os.path.join(output_dir, output_video_name)
+    original_video_width = int(video_reader.get(cv2.CAP_PROP_FRAME_WIDTH))
+    original_video_height = int(video_reader.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fps = video_reader.get(cv2.CAP_PROP_FPS)  # 获取视频的帧率
+
+    video_writer = cv2.VideoWriter(output_file_path, cv2.VideoWriter_fourcc('M', 'P', '4', 'V'),
+                                  int(fps), (original_video_width, original_video_height))
+
+    times = {}
+    times['read_frame']=0
+    times['resize_frame']=0
+    times['normalize_frame']=0
+    times['model_inference']=0
+    times['write_frame']=0
+    frame_list=[]
+    new_frame_list=[]
+    frame_index = 0  # 初始化帧索引
+
+    while video_reader.isOpened():
+        ok, frame = video_reader.read()
+        if not ok:
+            break
+        if not frame.size:
+            continue
+        resized_frame = cv2.resize(frame, (IMAGE_WIDTH, IMAGE_HEIGHT))
+        normalized_frame = resized_frame / 255.0
+        new_frame_list.append(normalized_frame)
+        frame_list.append(frame)
+
+        # 计算每一帧的时间戳（秒）
+        timestamp = frame_index / fps
+        minutes, seconds = divmod(timestamp, 60)
+        # print(f"Frame {frame_index}: Time {int(minutes):02d}:{int(seconds):05.2f}")
+
+        frame_index += 1  # 更新帧索引
+
+    begin_index=-1
+    end_index=SEQUENCE_LENGTH
+    current_label=''
+    if len(frame_list) >= SEQUENCE_LENGTH:
+        for i in tqdm(range(0, len(frame_list) - SEQUENCE_LENGTH + 1, 1), desc='Processing sequences'):
+            sequence_frames = new_frame_list[i:i + SEQUENCE_LENGTH]
+            input_list=[]
+            input_list.append(sequence_frames)
+            model = model.to(device)
+            input_list = np.array(input_list)
+            predicted_labels_probabilities = model(torch.from_numpy(input_list).float().to(device))
+            probability_tensor = F.softmax(predicted_labels_probabilities, dim=1)
+            probability_array = probability_tensor.detach().cpu().numpy()
+            probability = probability_array[0]
+            predicted_label = np.argmax(probability)
+            predicted_confidence = probability[predicted_label]
+            frame = frame_list[i]
+            if predicted_confidence >= confidence_threshold:
+                predicted_class_name = CLASSES_LIST[predicted_label]
+                if begin_index==-1:
+                    current_label=str(predicted_class_name)
+                    begin_index=i
+                    end_index=i+SEQUENCE_LENGTH-1
+                else:
+                    end_index+=1
+                
+                start_time = i / fps
+                end_time = (i + SEQUENCE_LENGTH) / fps
+                
+                cv2.putText(frame, predicted_class_name, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            else:
+                if begin_index!=-1:
+                    start_time = begin_index / fps
+                    if end_index >=len(frame_list):
+                        end_index=len(frame_list)-1
+                    end_time = (end_index) / fps
+                    clip = VideoFileClip(video_file_path)
+                    cut_clip = clip.subclip(start_time, end_time)
+                    cut_clip.write_videofile(f"./{output_dir}/{current_label}_{start_time}_.mp4", codec="libx264")
+                    begin_index=-1
+                    end_index=SEQUENCE_LENGTH
+                    current_label=''
+            video_writer.write(frame)
+    video_reader.release()
+    video_writer.release()
 import time
+
+
 def main(args):
     # 设置设备
     start_time = time.time()
@@ -222,7 +309,7 @@ def main(args):
     output_dir = args.output_dir
     output_video_name = args.output_video_name
     output_video_file_path = os.path.join(output_dir, output_video_name)
-    predict_on_video(input_video_file_path, output_video_file_path, args.sequence_length, model,device, args.classes_list,args.image_height,args.image_width)
+    predict_on_video_test(input_video_file_path, output_dir, output_video_name, args.sequence_length, model,device, args.classes_list,args.image_height,args.image_width)
     end_time=time.time()
     total_training_time = end_time - start_time
     print(f"Total inference time: {total_training_time:.2f} seconds")
