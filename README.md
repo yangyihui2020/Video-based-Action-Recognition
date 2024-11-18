@@ -11,33 +11,9 @@ Video-based-Action-Recognition/
 │
 ├── Video-based-Action-Recognition-Pytorch/ 这里存放了本项目代码的 pytorch 版本，可以使用 GPU 进行加速
 │
-├── myvediodataset/  该文件夹用来放模型训练所需的数据，其中的子文件夹名称就是标签
-│   ├── openfile1/
-│   └── openmail1/
+├── Video-based-Action-Recognition-Tensorflow/ 这里存放了本项目代码的 Tensorflow 版本
 │
-├── Output/           测试数据输出目录
-│   └── output.mp4
-│
-├── test_videos/      用来存放模型推理时用的测试数据
-│   └── 20241025_105625.mp4
-│
-├── LSTM_model_2024_11_01_14_04_18.h5 训练之后的模型输出
-│
-├── lstm_model_inference.py           模型推理代码
-│
-├── lstm_model_inference.sh           模型推理调用脚本
-│
-├── lstm_model_train.py               模型训练代码
-│
-├── lstm_model_train.sh               模型训练脚本
-│
-├──  lstm_model.py                    基于桌面端操作视频的动作识别模型类
-│
-├──  utils.py                         包含关键帧提取算法等视频处理工具
-│
-├──  extract_keyframes.py             关键帧提取算法测试代码
-│
-└──  extract_keyframes.sh             关键帧提取算法测试脚本
+├── CLIP 这里存放的是视频切割的相关代码，你可以用它来构建本项目所需要的数据集
 
 ```
 
@@ -53,9 +29,9 @@ Video-based-Action-Recognition/
 
 ## 启动这个项目
 
-### 模型训练
+进入对应版本的目录（比如`cd ./Video-based-Action-Recognition-Pytorch/`，然后直接在命令行中运行下列命令即可
 
-直接在命令行中运行下列命令即可
+### 模型训练
 
 ```
 bash lstm_model_train.sh
@@ -107,6 +83,12 @@ bash lstm_model_inference.sh
 --method --num_top_frames --threshold --len_window 均为关键帧提取的相关参数，具体含义参见下面关键帧提取的部分。
 
 ```
+
+##### 模型推理的结果：
+
+模型推理完成之后，会生成一系列视频，其中会有一个和输入视频长度一致的长视频，改视频的右上角会被打上对应的标签（如果识别出了对应的动作）
+
+还会有一系列视频，它们从原视频中截取的对应的动作的视频（这一部分视频的命令规则是`f"./{output_dir}/{current_label}_{start_time}_.mp4"`,其中，`output_dir`是对应的输出目录，`current_label`是该视频对应识别出来的动作，`start_time`是该动作视频在原输入视频的出现时间。
 
 ### 关键帧提取
 
