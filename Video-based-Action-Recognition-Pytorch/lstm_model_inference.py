@@ -12,7 +12,7 @@ from moviepy.editor import VideoFileClip
 
 
 
-def predict_on_video_test(video_file_path, output_dir, output_video_name, SEQUENCE_LENGTH, model, device, CLASSES_LIST,actionlist_to_recognise IMAGE_HEIGHT=64, IMAGE_WIDTH=64, confidence_threshold=0.99):
+def predict_on_video_test(video_file_path, output_dir, output_video_name, SEQUENCE_LENGTH, model, device, CLASSES_LIST,actionlist_to_recognise, IMAGE_HEIGHT=64, IMAGE_WIDTH=64, confidence_threshold=0.99):
     video_reader = cv2.VideoCapture(video_file_path)
     output_file_path = os.path.join(output_dir, output_video_name)
     original_video_width = int(video_reader.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -139,7 +139,6 @@ if __name__ == '__main__':
     parser.add_argument('--image_width', type=int, default=64, help='Width of the images.')
     parser.add_argument('--classes_list', type=str, nargs='+', required=True, help='List of class names.')
     parser.add_argument('--target_resolution', type=int, default=300, help='Target resolution for the video.')
-    parser.add_argument('--confidence_threshold', type=float, default=0.99, help='Confidence rate')
     parser.add_argument('--confidence_threshold', type=float, default=0.99, help='Confidence rate')
     parser.add_argument('--actionlist_to_recognise', type=str, nargs='+', required=True, help='actionlist to recognise')
 

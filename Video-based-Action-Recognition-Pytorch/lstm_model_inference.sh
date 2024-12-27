@@ -1,8 +1,11 @@
 python lstm_model_inference.py \
 --model_path './LSTM_model.pth' \
 --input_video_file_path "./test_videos/动态背景+窗口.mp4" \
---classes_list openfile1 openmail1 openwebsite \
---output_video_name 'output.mp4'
+--classes_list openfile1 openwebsite \
+--output_video_name 'output.mp4' \
+--output_dir './Output' \
+--confidence_threshold 0.99 \
+--actionlist_to_recognise openfile1 
 
 
 # # 定义模型路径和Python脚本路径
