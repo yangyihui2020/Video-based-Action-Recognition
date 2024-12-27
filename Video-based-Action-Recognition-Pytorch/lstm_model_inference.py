@@ -12,7 +12,7 @@ from moviepy.editor import VideoFileClip
 
 
 
-def predict_on_video_test(video_file_path, output_dir, output_video_name, SEQUENCE_LENGTH, model, device, CLASSES_LIST, IMAGE_HEIGHT=64, IMAGE_WIDTH=64, confidence_threshold=0.99):
+def predict_on_video_test(video_file_path, output_dir, output_video_name, SEQUENCE_LENGTH, model, device, CLASSES_LIST,actionlist_to_recognise IMAGE_HEIGHT=64, IMAGE_WIDTH=64, confidence_threshold=0.99):
     video_reader = cv2.VideoCapture(video_file_path)
     output_file_path = os.path.join(output_dir, output_video_name)
     original_video_width = int(video_reader.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -87,7 +87,8 @@ def predict_on_video_test(video_file_path, output_dir, output_video_name, SEQUEN
                     end_time = (end_index) / fps
                     clip = VideoFileClip(video_file_path)
                     cut_clip = clip.subclip(start_time, end_time)
-                    cut_clip.write_videofile(f"{output_dir}/{current_label}_{start_time}_.mp4", codec="libx264")
+                    if current_label in actionlist_to_recognise:
+                        cut_clip.write_videofile(f"{output_dir}/{current_label}_{start_time}_.mp4", codec="libx264")
                     begin_index=-1
                     end_index=SEQUENCE_LENGTH
                     current_label=''
@@ -95,7 +96,7 @@ def predict_on_video_test(video_file_path, output_dir, output_video_name, SEQUEN
     video_reader.release()
     video_writer.release()
 import time
-
+import shutil
 
 def main(args):
     # 设置设备
@@ -111,9 +112,13 @@ def main(args):
 
     input_video_file_path =args.input_video_file_path
     output_dir = args.output_dir
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
+    os.mkdir(output_dir)
     output_video_name = args.output_video_name
     output_video_file_path = os.path.join(output_dir, output_video_name)
-    predict_on_video_test(input_video_file_path, output_dir, output_video_name, args.sequence_length, model,device, args.classes_list,args.image_height,args.image_width,args.confidence_threshold)
+    predict_on_video_test(input_video_file_path, output_dir, output_video_name, args.sequence_length, model,device, args.classes_list,args.actionlist_to_recognise,
+                          args.image_height,args.image_width,args.confidence_threshold)
     end_time=time.time()
     total_training_time = end_time - start_time
     print(f"Total inference time: {total_training_time:.2f} seconds")
@@ -135,6 +140,8 @@ if __name__ == '__main__':
     parser.add_argument('--classes_list', type=str, nargs='+', required=True, help='List of class names.')
     parser.add_argument('--target_resolution', type=int, default=300, help='Target resolution for the video.')
     parser.add_argument('--confidence_threshold', type=float, default=0.99, help='Confidence rate')
+    parser.add_argument('--confidence_threshold', type=float, default=0.99, help='Confidence rate')
+    parser.add_argument('--actionlist_to_recognise', type=str, nargs='+', required=True, help='actionlist to recognise')
 
     args = parser.parse_args()
     main(args)
