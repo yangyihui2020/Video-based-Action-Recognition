@@ -121,6 +121,10 @@ bash lstm_model_train.sh
 --batch_size ：
 
 设置每次迭代中用于训练模型的样本数量（batch size）
+
+--model_name:
+
+指定模型的名称
 ```
 
 ### 模型推理

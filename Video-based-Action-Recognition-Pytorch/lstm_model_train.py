@@ -56,7 +56,8 @@ def main(args):
     model=lstm_model.train(model,train_loader,test_loader,device,100)
 
     # 保存
-    model_file_name = f'LSTM_model.pth'
+    model_name = args.model_name
+    model_file_name = f'{model_name}.pth'
     torch.save(model.state_dict(), model_file_name)
 
 if __name__ == '__main__':
@@ -69,6 +70,7 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=27, help='Random seed for reproducibility.')
     parser.add_argument('--epochs', type=int, default=100, help='Number of epochs to train the model.')
     parser.add_argument('--batch_size', type=int, default=4, help='Batch size for training.')
+    parser.add_argument('--model_name', type=str, default='lstm_model', help='Name of the model.')
 
     args = parser.parse_args()
     main(args)

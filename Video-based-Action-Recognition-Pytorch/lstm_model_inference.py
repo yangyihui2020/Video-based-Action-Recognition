@@ -1,14 +1,13 @@
 import torch
 import cv2
 import numpy as np
-from moviepy.editor import VideoFileClip
+from moviepy import VideoFileClip
 import argparse
 import os
 from lstm_model import LSTMModel
 import torch.nn.functional as F
 import time 
 from tqdm import tqdm
-from moviepy.editor import VideoFileClip
 
 
 
@@ -86,7 +85,7 @@ def predict_on_video_test(video_file_path, output_dir, output_video_name, SEQUEN
                         end_index=len(frame_list)-1
                     end_time = (end_index) / fps
                     clip = VideoFileClip(video_file_path)
-                    cut_clip = clip.subclip(start_time, end_time)
+                    cut_clip = clip.subclipped(start_time, end_time)
                     if current_label in actionlist_to_recognise:
                         cut_clip.write_videofile(f"{output_dir}/{current_label}_{start_time}_.mp4", codec="libx264")
                     begin_index=-1
